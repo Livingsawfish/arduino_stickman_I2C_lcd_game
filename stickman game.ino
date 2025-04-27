@@ -6,7 +6,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 // Stickman frame (simplified)
 byte stickman[8] = {
   B01110,
-  B01110,
+  B11111,
   B01110,
   B00100,
   B01110,
