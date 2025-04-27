@@ -20,7 +20,7 @@ byte mountain[8] = {
   B00100,
   B01110,
   B11111,
-  B00100,
+  B01110,
   B00100,
   B00100,
   B00100,
@@ -29,13 +29,25 @@ byte mountain[8] = {
 
 // Bird obstacle (improved bird)
 byte bird[8] = {
-   B00000,
+  B00000,
   B00010,
   B01111,
   B10111,
   B10111,
   B01111,
   B00010,
+  B00000
+};
+
+// Heart icon for health bar
+byte heart[8] = {
+  B00000,
+  B01010,
+  B11111,
+  B11111,
+  B01110,
+  B00100,
+  B00000,
   B00000
 };
 
@@ -48,6 +60,7 @@ int highScore = 0; // Variable to store the high score
 int terrain[16]; // Array to store the terrain: 0=empty, 1=mountain, 2=bird
 const int buttonPin = 2; // Pin for the jump button
 
+int lives = 3; // Player starts with 3 lives
 bool gameOverState = false; // Track if game over state is active
 bool highScoreDisplayed = false; // Track if high score screen is displayed
 
@@ -58,6 +71,7 @@ void setup() {
   lcd.createChar(0, stickman);
   lcd.createChar(1, mountain);
   lcd.createChar(2, bird);
+  lcd.createChar(3, heart); // Create heart icon for health bar
   
   pinMode(buttonPin, INPUT_PULLUP); // Set button pin with internal pull-up resistor
   
@@ -83,6 +97,9 @@ void loop() {
   if (score > 0) {
     lcd.clear();
   }
+
+  // Draw health bar
+  drawHealthBar();
   
   // Handle Jump if button is pressed
   if (digitalRead(buttonPin) == LOW) { // Button pressed (LOW means connected to GND)
@@ -130,10 +147,10 @@ void loop() {
 
   // Check collision with terrain
   if (terrain[2] == 1 && stickmanY == 1) { // Mountain collision
-    gameOver();
+    loseLife();
   }
   if (terrain[2] == 2 && stickmanY == 0) { // Bird collision
-    gameOver();
+    loseLife();
   }
 
   // Update score
@@ -197,6 +214,7 @@ void displayHighScore() {
 
 void resetGame() {
   score = 0;
+  lives = 3; // Reset lives
   for (int i = 0; i < 16; i++) {
     terrain[i] = 0; // Initialize terrain with empty spaces
   }
@@ -209,4 +227,22 @@ void resetGame() {
   lcd.setCursor(0, 0);
   lcd.print("Starting New Game!");
   delay(1000); // Display starting message for a second
+}
+
+void loseLife() {
+  lives--; // Decrement lives
+  if (lives <= 0) {
+    gameOver(); // Trigger game over if no lives left
+  }
+}
+
+void drawHealthBar() {
+  lcd.setCursor(0, 0);
+  for (int i = 0; i < 3; i++) {
+    if (i < lives) {
+      lcd.write(byte(3)); // Draw heart for each remaining life
+    } else {
+      lcd.print(" "); // Clear space for lost lives
+    }
+  }
 }
