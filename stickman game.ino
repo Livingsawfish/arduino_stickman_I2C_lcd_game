@@ -44,10 +44,12 @@ int stickmanY = 1; // Start standing on the second row
 bool jumping = false;
 int jumpCounter = 0;
 int score = 0;
+int highScore = 0; // Variable to store the high score
 int terrain[16]; // Array to store the terrain: 0=empty, 1=mountain, 2=bird
 const int buttonPin = 2; // Pin for the jump button
 
 bool gameOverState = false; // Track if game over state is active
+bool highScoreDisplayed = false; // Track if high score screen is displayed
 
 void setup() {
   lcd.init();
@@ -66,9 +68,14 @@ void setup() {
 }
 
 void loop() {
-  if (gameOverState) {  // If in Game Over state, wait for button press to restart
+  if (gameOverState) {  // If in Game Over state
     if (digitalRead(buttonPin) == LOW) { // Button pressed (LOW means connected to GND)
-      resetGame();
+      delay(200); // Debounce delay
+      if (!highScoreDisplayed) {
+        displayHighScore();
+      } else {
+        resetGame();
+      }
     }
     return; // Don't do anything else during game over
   }
@@ -172,7 +179,20 @@ void gameOver() {
   lcd.print("Score:");
   lcd.print(score);
   lcd.setCursor(10, 1);
-  lcd.print("retry?");
+  lcd.print("Retry?");
+  if (score > highScore) {
+    highScore = score; // Update high score
+  }
+  highScoreDisplayed = false; // Reset high score display state
+}
+
+void displayHighScore() {
+  lcd.clear();
+  lcd.setCursor(3, 0);
+  lcd.print("HIGH SCORE");
+  lcd.setCursor(6, 1);
+  lcd.print(highScore);
+  highScoreDisplayed = true; // Set high score display state
 }
 
 void resetGame() {
@@ -184,6 +204,7 @@ void resetGame() {
   jumping = false;
   jumpCounter = 0;
   gameOverState = false;
+  highScoreDisplayed = false; // Reset high score display state
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Starting New Game!");
