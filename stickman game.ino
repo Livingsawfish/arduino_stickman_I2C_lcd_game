@@ -29,13 +29,13 @@ byte mountain[8] = {
 
 // Bird obstacle (improved bird)
 byte bird[8] = {
-  B00100,
-  B01110,
-  B11111,
-  B01010,
-  B01010,
-  B11111,
-  B00100,
+   B00000,
+  B00010,
+  B01111,
+  B10111,
+  B10111,
+  B01111,
+  B00010,
   B00000
 };
 
