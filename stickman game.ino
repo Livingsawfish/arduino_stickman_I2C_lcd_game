@@ -79,18 +79,25 @@ void loop() {
   
   // Handle Jump if button is pressed
   if (digitalRead(buttonPin) == LOW) { // Button pressed (LOW means connected to GND)
-    jumping = true;
+    if (jumping) {
+      // If already jumping, go down immediately
+      jumping = false;
+      jumpCounter = 0;
+      stickmanY = 1; // Return to ground
+    } else {
+      // Start a jump
+      jumping = true;
+    }
   }
 
   if (jumping) {
     stickmanY = 0; // Jumped up to top row
     jumpCounter++;
-    if (jumpCounter > 5) { // stay up for 5 frames
+    if (jumpCounter > 5) { // Stay up for 5 frames
       jumping = false;
       jumpCounter = 0;
+      stickmanY = 1; // Return to ground
     }
-  } else {
-    stickmanY = 1; // Normal position (bottom, standing)
   }
 
   // Draw Stickman (simplified)
